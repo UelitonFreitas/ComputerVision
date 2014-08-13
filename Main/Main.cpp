@@ -49,7 +49,7 @@ int main(int argc, char** argv){
     
     BoW bow(detectorType,descriptorType,matcherType,hessianThreshold,dictionarySize);
     
-    ColorHistogram ch(dictionarySize,"HSV",false,false,true);
+    ColorHistogram ch(8,"HSV",false,false,true);
     
     //Train Images
     vector<Mat>                 grayTrainImages;
@@ -63,19 +63,23 @@ int main(int argc, char** argv){
     
     loadTrainImages(grayTrainImages,colorTrainImages,imagesClasses);
     
-    ch.loadTrainImages(colorTrainImages,imagesClasses);
+    //ch.createHistograms(colorTrainImages,imagesClasses);
+    //vector<vector<float> > imagesHist = ch.getHistograms();
     
     //BOW
-    /*
-    bow.loadTrainImages(grayTrainImages,imagesClasses);
-    bow.trainFeaturesDetect();
+    
+      bow.loadTrainImages(grayTrainImages,imagesClasses);
+      bow.runTraining();
+    
+    /*bow.trainFeaturesDetect();
     bow.trainKeyPointsDescriptors();
     bow.createVocabulary();
     bow.setVocabularyOnImageDescriptor();
     bow.saveDictionary();
     bow.createImagesAttributes();
-    //bow.loadDictionary("Dictionary-16.xml");
     */
+    //bow.loadDictionary("Dictionary-16.xml");
+    
     
     //test
     //bow.createImageAttribute(grayTrainImages[8]);
@@ -83,12 +87,26 @@ int main(int argc, char** argv){
     //Mat testImage = bow.getImagesAttributesOfTestImage();
     
     
-    //SVM
-    /*
+    //SVM bow
+    
     SVMClass svm(classSet);
     svm.train(bow.getImagesAttributes(),imagesClasses);
-    svm.saveModel();
-    */
+    svm.saveModel("BoWsvmModel.xml");
+    
+    
+    //SVM hist
+    
+      SVMClass svmh(classSet);
+      //svmh.train(imagesHist,imagesClasses);
+      //svmh.saveModel("HsvmModel.xml");
+      //svmh.loadModel("HsvmModel.xml");
+      
+      //vector<float> hf = ch.createHistogram(colorTrainImages[2],false,false,true,"HSV");
+      
+      //cout << "class: " << svmh.predict(hf) << endl;
+
+      
+          
 
     //cout << endl << "Class: " << svm2.predict(testImage) << endl;
     

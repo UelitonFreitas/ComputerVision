@@ -75,8 +75,8 @@ class ImageHistogram{
         }
         
         
-        Mat& get3DHistogram(){
-            vector<vector<vector<int> > > h = this->treeDHistogram->getABCChannelHistogram(); 
+        vector<vector<vector<int> > >& get3DHistogram(){
+            return this->treeDHistogram->getABCChannelHistogram(); 
         }
 };
 #endif

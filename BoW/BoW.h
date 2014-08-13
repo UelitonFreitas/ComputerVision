@@ -72,6 +72,21 @@ class BoW{
         }
         
         
+        void runTraining(){
+            
+            if(this->trainImages != NULL and this->imagesClass != NULL){
+                this->trainFeaturesDetect();
+                this->trainKeyPointsDescriptors();
+                this->createVocabulary();
+                this->setVocabularyOnImageDescriptor();
+                this->saveDictionary();
+                this->createImagesAttributes();
+            }
+            else{
+                cout << endl<< this->tag << "You have to load train imagens and class names.";
+            }
+        }
+        
         void createImageAttribute(Mat& image){
             
             vector<KeyPoint> keyPoints;
@@ -103,8 +118,10 @@ class BoW{
         }
         
         void loadTrainImages(vector<Mat>& images,vector<string>& imagesClass){
+            cout << endl << this->tag << "Loading images..." << endl;
             this->trainImages = new vector<Mat>(images);
             this->imagesClass = new vector<string>(imagesClass);
+            cout << "Complete!!!" << endl;
         }
         
         void loadTestImages(vector<Mat>& images){
@@ -112,14 +129,14 @@ class BoW{
         }
         
         void trainFeaturesDetect(){
-            cout << endl << "Detecting keypoints of " << this->trainImages->size() << " images." << endl;
+            cout << endl << this->tag << "Detecting keypoints of " << this->trainImages->size() << " images." << endl;
             this->featureDetector->detect(*(this->trainImages),this->trainKeyPoints);
             cout << "Complete!!!" << endl;
         }
         
         void trainKeyPointsDescriptors(){
             
-            cout << endl << "Describing Key Points...." << endl;
+            cout << endl << this->tag << "Describing Key Points...." << endl;
             this->descriptorExtractor->compute(*(this->trainImages),this->trainKeyPoints,this->trainDescriptors);
             cout << "Complete!!!" << endl;    
             
@@ -128,7 +145,7 @@ class BoW{
         
         void createVocabulary(){
             
-            cout << endl << "Creating vocabulary...." << endl;
+            cout << endl << this->tag << "Creating vocabulary...." << endl;
             
             for(size_t i = 0 ; i < this->trainDescriptors.size(); i++){
                 
@@ -137,11 +154,11 @@ class BoW{
                     this->bowTrainer->add(descriptor.row(j));
                 }
             }
-            cout << "Appliyng k-means..." << endl;
+            cout << this->tag <<  "Appliyng k-means..." << endl;
             this->dictionary = this->bowTrainer->cluster();
             
             
-            cout << "Dictionary created with size " << this->dictionarySize << endl;
+            cout << this->tag << "Dictionary created with size " << this->dictionarySize << endl;
             
             
         }
@@ -192,8 +209,26 @@ class BoW{
             return this->trainKeyPoints;
         }
         
+        /*
         vector<Mat>& getImagesAttributes(){
             return this->imageAttributes;
+        }
+        */
+        
+        // TESTAR PARA IMPLEMENTAR PADRÃO DE COMUNICAÇÃO
+        vector<vector<float> >& getImagesAttributes(){
+            
+            int     numberOfImages  = this->imageAttributes.size();
+            vector<vector<float> >*  features = new  vector<vector<float> >(numberOfImages,vector<float>(this->dictionarySize));
+            
+            for(int i = 0; i <  numberOfImages; i++){
+                Mat row = this->imageAttributes[i].row(0);
+                for(int k = 0 ; k < row.cols; k++){
+                    (features->at(i)).at(k) = (float)row.data[k];
+                }
+            }
+            
+            return *features;
         }
         
         Mat& getImagesAttributesOfTestImage(){

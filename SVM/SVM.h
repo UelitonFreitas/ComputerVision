@@ -51,19 +51,11 @@ class SVMClass{
         }
         
         
-        void train(vector<Mat>& featuresDescriptors, vector<string>& featuresClass){
+        void train(vector<vector<float> >& featuresDescriptors, vector<string>& featuresClass){
             
             cout << endl << tag << "Training SVM...." << endl;
             this->numberOfFeatures      = featuresClass.size();
-            this->numberOfAttributes    = featuresDescriptors[0].cols;
-            
-            // Set up training data
-            //int labels[4] = {1, -1, -1, -1};
-            //Mat labelsMat(4, 1, CV_32SC1, labels);
-        
-            //float trainingData[4][2] = { {501, 10}, {255, 10}, {501, 255}, {10, 501} };
-            //Mat trainingDataMat(4, 2, CV_32FC1, trainingData);
-            
+            this->numberOfAttributes    = featuresDescriptors[0].size();            
             
             //Initialize vector of features class.
             int labels[this->numberOfFeatures];
@@ -77,7 +69,37 @@ class SVMClass{
             //Class labels formats dor opencv svm formats.
             float trainingData[this->numberOfFeatures][this->numberOfAttributes];
             
-            cout << "print" << endl;
+            for(int i = 0; i < this->numberOfFeatures ; i++){
+                for(int j = 0 ; j < numberOfAttributes; j++){
+                    trainingData[i][j] = featuresDescriptors[i][j];
+                }
+            }
+            
+            //Train data format for opencv svm.
+            Mat trainingDataMat(this->numberOfFeatures, this->numberOfAttributes,CV_32FC1, trainingData);
+            
+            SVM.train(trainingDataMat, labelsMat , Mat(), Mat(), params);
+            cout << "Complete!!" << endl;
+        }
+        
+        void train(vector<Mat>& featuresDescriptors, vector<string>& featuresClass){
+            
+            cout << endl << tag << "Training SVM...." << endl;
+            this->numberOfFeatures      = featuresClass.size();
+            this->numberOfAttributes    = featuresDescriptors[0].cols;            
+            
+            //Initialize vector of features class.
+            int labels[this->numberOfFeatures];
+            
+            for(int i = 0 ;i < this->numberOfFeatures   ; i++){
+                labels[i] = this->labelsMap[featuresClass[i]];
+            }
+            
+            Mat labelsMat(this->numberOfFeatures, 1,CV_32SC1, labels);
+        
+            //Class labels formats dor opencv svm formats.
+            float trainingData[this->numberOfFeatures][this->numberOfAttributes];
+            
             for(int i = 0; i < this->numberOfFeatures ; i++){
                 Mat row = featuresDescriptors[i].row(0);
                 for(int k = 0 ; k < row.cols; k++){
@@ -92,6 +114,20 @@ class SVMClass{
             SVM.train(trainingDataMat, labelsMat , Mat(), Mat(), params);
             cout << "Complete!!" << endl;
 
+            
+        }
+        
+        float predict(vector<float>& feature){
+            
+            float testData[1][feature.size()];
+            
+            for(int k = 0 ; k < feature.size(); k++){
+                testData[0][k] = feature[k];
+            }
+            
+            Mat testDataMat(1, feature.size(), CV_32FC1,testData);
+            
+            return this->SVM.predict(testDataMat);
             
         }
         
@@ -110,10 +146,10 @@ class SVMClass{
             
         }
         
-        void saveModel(){
+        void saveModel(string fileName){
             
             cout << endl << tag << " Saving model on file: svmModel.xml..." << endl;
-            this->SVM.save("svmModel.xml");
+            this->SVM.save(fileName.c_str());
             cout << "Complete!!" << endl;
             
         }
