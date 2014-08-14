@@ -49,7 +49,7 @@ int main(int argc, char** argv){
     
     BoW bow(detectorType,descriptorType,matcherType,hessianThreshold,dictionarySize);
     
-    ColorHistogram ch(8,"HSV",false,false,true);
+    ColorHistogram ch(2,_HSVColorSpace,false,false,true);
     
     //Train Images
     vector<Mat>                 grayTrainImages;
@@ -65,11 +65,17 @@ int main(int argc, char** argv){
     
     //ch.createHistograms(colorTrainImages,imagesClasses);
     //vector<vector<float> > imagesHist = ch.getHistograms();
-    
+    /*
+    for(int i = 0 ; i < imagesHist.size(); i++){
+      for(int j = 0 ; j < imagesHist[i].size(); j++)
+        cout << imagesHist[i][j] << " " ;
+      cout << imagesClasses[i] << endl;
+    }
+    */
     //BOW
     
-      bow.loadTrainImages(grayTrainImages,imagesClasses);
-      bow.runTraining();
+    //bow.loadTrainImages(grayTrainImages,imagesClasses);
+    //bow.runTraining();
     
     /*bow.trainFeaturesDetect();
     bow.trainKeyPointsDescriptors();
@@ -87,23 +93,32 @@ int main(int argc, char** argv){
     //Mat testImage = bow.getImagesAttributesOfTestImage();
     
     
-    //SVM bow
-    
+    //Train SVM bow
     SVMClass svm(classSet);
-    svm.train(bow.getImagesAttributes(),imagesClasses);
-    svm.saveModel("BoWsvmModel.xml");
+    //svm.train(bow.getImagesAttributes(),imagesClasses);
+    //svm.saveModel("BoWsvmModel.xml");
+    
+    //---------------Test SVM BOW-------------------------//
+    //bow.loadDictionary("Dictionary-16.xml");
+    //bow.createImageAttribute(grayTrainImages[0]);
+    //vector<float> d = bow.getImagesAttributesOfTestImage();
+    //
+    //svm.loadModel("BoWsvmModel.xml");
+    //cout << "RESPONSE: " << svm.predict(d) << endl;
     
     
-    //SVM hist
+    //---------------SVM train---------------------------//
     
-      SVMClass svmh(classSet);
-      //svmh.train(imagesHist,imagesClasses);
-      //svmh.saveModel("HsvmModel.xml");
-      //svmh.loadModel("HsvmModel.xml");
-      
-      //vector<float> hf = ch.createHistogram(colorTrainImages[2],false,false,true,"HSV");
-      
-      //cout << "class: " << svmh.predict(hf) << endl;
+    SVMClass svmh(classSet);
+    //svmh.train(imagesHist,imagesClasses);
+    //svmh.saveModel("HSVColorHistogramSvmModel.xml");
+    svmh.loadModel("HSVColorHistogramSvmModel.xml");
+    
+    
+    for(int i = 0 ; i < colorTrainImages.size(); i++){
+      vector<float> hf = ch.createHistogram(colorTrainImages[i]);
+      cout << "class: " << svmh.predict(hf) << endl;
+    }
 
       
           

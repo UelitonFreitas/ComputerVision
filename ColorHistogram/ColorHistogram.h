@@ -15,15 +15,15 @@ using namespace std;
 
 
 enum colorSpace{
-    _HSV,
-    _RGB
+    _HSVColorSpace,
+    _RGBColorSpace
 };
 
 class ColorHistogram{
     
     private:
         string                  tag;
-        string*                 colorSpace;
+        int                 colorSpace;
         int                     binSize;
         vector<Mat>*            trainImages;
         vector<ImageHistogram*>* trainImageHistogram;
@@ -36,9 +36,9 @@ class ColorHistogram{
         
         
     public:
-        ColorHistogram(int binSize = 16, string colorSpace = "HSV", bool _1D = false, bool _2D = false, bool _3D = true){
+        ColorHistogram(int binSize = 16, int colorSpace = _HSVColorSpace, bool _1D = false, bool _2D = false, bool _3D = true){
             this->binSize       = binSize;
-            this->colorSpace    = new String(colorSpace);
+            this->colorSpace    = colorSpace;//= new String(colorSpace);
             
             this->_1DHistogram  = _1D;
             this->_2DHistogram  = _2D;
@@ -48,19 +48,15 @@ class ColorHistogram{
             
         }
         
-        vector<float>& createHistogram(Mat& testImage, bool _1D, bool _2D, bool _3D,string colorSpace){
-            ImageHistogram* testFeature  = new ImageHistogram(testImage,this->binSize,_1D,_2D,_3D,colorSpace);
+        //Precisa melhorar
+        vector<float>& createHistogram(Mat& testImage){
             
-            if(_1D){
-                
-            }
-            else if(_2D){
-                
-            }
-            else if(_3D){
-                return createFeatureMat(*testFeature);
-            }
-            //vector<vector<vector<int> > > v = this->trainImageHistogram->at(i)->get3DHistogram();
+            if(this->colorSpace == _HSVColorSpace)
+                cvtColor(testImage,testImage,CV_RGB2HSV);
+            
+            ImageHistogram* testFeature  = new ImageHistogram(testImage,this->binSize,this->_1DHistogram,this->_2DHistogram,this->_3DHistogram);
+            return createFeatureMat(*testFeature);
+            
         }
         
         void createHistograms(vector<Mat>& images,vector<string>& imagesClass){
@@ -70,10 +66,12 @@ class ColorHistogram{
             this->trainImageHistogram = new vector<ImageHistogram*>(images.size());
             
             for (int i = 0; i < images.size(); i++){
+
+                if(this->colorSpace == _HSVColorSpace)
+                    cvtColor(images[i],images[i],CV_RGB2HSV);
                 
-                this->trainImageHistogram->at(i) = new ImageHistogram(images[i],this->binSize,this->_1DHistogram,this->_2DHistogram,this->_3DHistogram,*this->colorSpace);
-                
-                vector<vector<vector<int> > > v = this->trainImageHistogram->at(i)->get3DHistogram();
+                this->trainImageHistogram->at(i) = new ImageHistogram(images[i],this->binSize,this->_1DHistogram,this->_2DHistogram,this->_3DHistogram);
+
             }
             
             this->trainImages = new vector<Mat>(images);
@@ -115,12 +113,6 @@ class ColorHistogram{
             return *feature;
         }
         
-        void computeTrainColorHistograms(){
-            
-            for (int i = 0; i < this->trainImages->size(); i++){
-                //this->computeColorHistogram(this->trainImages->at(i));
-            }
-        }
 
     
 };

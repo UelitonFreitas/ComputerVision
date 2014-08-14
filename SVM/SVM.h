@@ -32,10 +32,9 @@ class SVMClass{
         
     public:
         
-        SVMClass(vector<string>& setOfClasses, int numberOfAttributes = 0){
+        SVMClass(vector<string>& setOfClasses){
             
             this->numberOfClasses       = setOfClasses.size();
-            this->numberOfAttributes    = numberOfAttributes;
             //Initialize labels map.
             for (int i = 0; i < this->numberOfClasses    ; i++){
                 labelsMap[setOfClasses[i]] = i;
@@ -148,7 +147,7 @@ class SVMClass{
         
         void saveModel(string fileName){
             
-            cout << endl << tag << " Saving model on file: svmModel.xml..." << endl;
+            cout << endl << tag << " Saving model on file: " <<fileName.c_str() << "..." << endl;
             this->SVM.save(fileName.c_str());
             cout << "Complete!!" << endl;
             

@@ -1,0 +1,81 @@
+<?xml version="1.0"?>
+<opencv_storage>
+<my_svm type_id="opencv-ml-svm">
+  <svm_type>C_SVC</svm_type>
+  <kernel><type>LINEAR</type></kernel>
+  <C>1.0000000000000001e-01</C>
+  <term_criteria><epsilon>2.2204460492503131e-16</epsilon>
+    <iterations>10000000</iterations></term_criteria>
+  <var_all>8</var_all>
+  <var_count>8</var_count>
+  <class_count>4</class_count>
+  <class_labels type_id="opencv-matrix">
+    <rows>1</rows>
+    <cols>4</cols>
+    <dt>i</dt>
+    <data>
+      0 1 2 3</data></class_labels>
+  <sv_total>6</sv_total>
+  <support_vectors>
+    <_>
+      2.66690176e-06 1.18682492e-05 -1.97284362e-06 6.03991339e-06
+      -7.77774346e-07 -2.72796296e-06 -2.49427353e-06 -2.66320683e-07</_>
+    <_>
+      -1.31366731e-04 3.84312916e-05 2.80719623e-02 1.33985803e-02
+      2.21076813e-02 -2.32403670e-02 0. 0.</_>
+    <_>
+      -1.12805037e-05 1.81298765e-05 1.32251853e-06 -2.07353351e-05
+      -1.58308321e-05 -5.01417890e-06 -9.20663101e-09 -3.13790349e-09</_>
+    <_>
+      -9.43838040e-06 -8.96930669e-06 2.62201161e-06 1.24646965e-06
+      4.30269949e-07 4.28145910e-07 2.10750795e-06 1.95484944e-07</_>
+    <_>
+      -7.14431508e-06 1.68752485e-05 1.86851787e-06 -8.00361304e-05
+      -2.93871426e-06 3.76245625e-05 9.56954227e-06 1.87192491e-05</_>
+    <_>
+      2.75556954e-06 2.63331071e-06 -9.81999892e-06 -2.60255820e-05
+      -4.63244760e-06 -9.13690747e-06 -3.11559029e-10 0.</_></support_vectors>
+  <decision_functions>
+    <_>
+      <sv_count>1</sv_count>
+      <rho>2.1493550378585393e+00</rho>
+      <alpha>
+        1.</alpha>
+      <index>
+        0</index></_>
+    <_>
+      <sv_count>1</sv_count>
+      <rho>1.2226155055973175e+01</rho>
+      <alpha>
+        1.</alpha>
+      <index>
+        1</index></_>
+    <_>
+      <sv_count>1</sv_count>
+      <rho>2.4043142096977263e-01</rho>
+      <alpha>
+        1.</alpha>
+      <index>
+        2</index></_>
+    <_>
+      <sv_count>1</sv_count>
+      <rho>-2.4296801495214293e+00</rho>
+      <alpha>
+        1.</alpha>
+      <index>
+        3</index></_>
+    <_>
+      <sv_count>1</sv_count>
+      <rho>-3.2972047163781406e+00</rho>
+      <alpha>
+        1.</alpha>
+      <index>
+        4</index></_>
+    <_>
+      <sv_count>1</sv_count>
+      <rho>1.5785981996539549e-03</rho>
+      <alpha>
+        1.</alpha>
+      <index>
+        5</index></_></decision_functions></my_svm>
+</opencv_storage>

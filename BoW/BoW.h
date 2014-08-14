@@ -124,10 +124,6 @@ class BoW{
             cout << "Complete!!!" << endl;
         }
         
-        void loadTestImages(vector<Mat>& images){
-            this->testImages = new vector<Mat>(images);
-        }
-        
         void trainFeaturesDetect(){
             cout << endl << this->tag << "Detecting keypoints of " << this->trainImages->size() << " images." << endl;
             this->featureDetector->detect(*(this->trainImages),this->trainKeyPoints);
@@ -171,6 +167,7 @@ class BoW{
             if(file.isOpened()){
                 cout << tag << "Loading Dictionary with size: " << this->dictionarySize << " ...." <<endl;;
                 file["dictionary"] >> this->dictionary;
+                setVocabularyOnImageDescriptor();
             }
             else
                 cout << this->tag << "Cannot load the dictionary file." << endl;
@@ -231,10 +228,22 @@ class BoW{
             return *features;
         }
         
+        vector<float>& getImagesAttributesOfTestImage(){
+            
+            vector<float>* feature = new vector<float>(this->dictionarySize);
+            Mat row = this->imageAttributes[0].row(0);
+            for(int k = 0 ; k < row.cols; k++){
+                feature->at(k) = (float)row.data[k];
+            }
+            
+            return *feature;
+        }
+        
+        /*
         Mat& getImagesAttributesOfTestImage(){
             return this->imageAttributes[0];
         }
-    
+        */
 };
 
 

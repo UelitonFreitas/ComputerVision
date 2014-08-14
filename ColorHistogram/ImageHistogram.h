@@ -20,7 +20,6 @@ using namespace std;
 class ImageHistogram{
     private:
         
-        string*         colorSpace;
         int             binSize;
         
         //Color Histograms.
@@ -30,9 +29,8 @@ class ImageHistogram{
         
     
     public:    
-        ImageHistogram(Mat& image, int binSize, bool _1D, bool _2D , bool _3D ,string& colorSpace){
+        ImageHistogram(Mat& image, int binSize, bool _1D, bool _2D , bool _3D){
             this->binSize       = binSize;
-            this->colorSpace    = new String(colorSpace);
             
             oneDHistogram   = _1D ? new OneDimensionColorHistogram(binSize) :  NULL;
             
