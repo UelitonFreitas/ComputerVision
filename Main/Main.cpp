@@ -13,6 +13,7 @@
 
 #include "../BoW/BoW.h"
 #include "../SVM/SVM.h"
+#include "../BoFC/BoFC.h"
 #include "../ColorHistogram/ColorHistogram.h"
 
 using namespace cv;
@@ -93,6 +94,10 @@ int main(int argc, char** argv){
     //Mat testImage = bow.getImagesAttributesOfTestImage();
     
     
+    //BoFC
+    BoFC bofc;
+    
+    
     //Train SVM bow
     SVMClass svm(classSet);
     //svm.train(bow.getImagesAttributes(),imagesClasses);
@@ -115,10 +120,10 @@ int main(int argc, char** argv){
     svmh.loadModel("HSVColorHistogramSvmModel.xml");
     
     
-    for(int i = 0 ; i < colorTrainImages.size(); i++){
-      vector<float> hf = ch.createHistogram(colorTrainImages[i]);
-      cout << "class: " << svmh.predict(hf) << endl;
-    }
+    //for(int i = 0 ; i < colorTrainImages.size(); i++){
+    //  vector<float> hf = ch.createHistogram(colorTrainImages[i]);
+    //  cout << "class: " << svmh.predict(hf) << endl;
+    //}
 
       
           

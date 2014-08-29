@@ -6,6 +6,32 @@
 
 #IncludeRegexTransform: 
 
+/home/ueliton/MyOpenCV/BoFC/BoFC.h
+cv.h
+/home/ueliton/MyOpenCV/BoFC/cv.h
+cxcore.h
+/home/ueliton/MyOpenCV/BoFC/cxcore.h
+opencv2/imgproc/imgproc.hpp
+-
+opencv2/highgui/highgui.hpp
+-
+opencv2/nonfree/nonfree.hpp
+-
+opencv2/features2d/features2d.hpp
+/home/ueliton/MyOpenCV/BoFC/opencv2/features2d/features2d.hpp
+opencv2/ml/ml.hpp
+/home/ueliton/MyOpenCV/BoFC/opencv2/ml/ml.hpp
+stdlib.h
+-
+ColorMoments.h
+/home/ueliton/MyOpenCV/BoFC/ColorMoments.h
+
+/home/ueliton/MyOpenCV/BoFC/ColorMoments.h
+cv.h
+/home/ueliton/MyOpenCV/BoFC/cv.h
+stdlib.h
+-
+
 /home/ueliton/MyOpenCV/BoW/BoW.h
 cv.h
 /home/ueliton/MyOpenCV/BoW/cv.h
@@ -87,6 +113,8 @@ errno.h
 /home/ueliton/MyOpenCV/BoW/BoW.h
 ../SVM/SVM.h
 /home/ueliton/MyOpenCV/SVM/SVM.h
+../BoFC/BoFC.h
+/home/ueliton/MyOpenCV/BoFC/BoFC.h
 ../ColorHistogram/ColorHistogram.h
 /home/ueliton/MyOpenCV/ColorHistogram/ColorHistogram.h
 
