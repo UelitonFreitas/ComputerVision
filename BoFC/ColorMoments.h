@@ -47,34 +47,45 @@ class ColorMoments{
             //Number Of Pixels that was in 5x5 range.
             int     numberOfPixels = 0;
             
+            //cout << "Image:h-" << image.rows << " w-" << image.cols << endl;
+            //cout << "Keypoint: x-" << x << " y-" << y << endl;
+            
             //Get Mean of 5x5 pixel around key point kp.
             for (int i = x-3; i < x+2; i++){
                 for(int j = y-3; j < y+2 ; j++){
                     
-                    if(isInRange(i,j,image.cols,image.rows)){
+                    if(isInRange(i,j,image.rows,image.cols)){
                         Vec3b pixel = image.at<Vec3b>(i,j);
+                        
                         int aChannel    = int( pixel.val[0] );
                         int bChannel    = int( pixel.val[1] );
                         int cChannel    = int( pixel.val[2] );
+                        
+                        //cout << "RGB:  "<< aChannel << " " << bChannel << " " << cChannel << " " << endl;
                         
                         mean[0] += aChannel;
                         mean[1] += bChannel;
                         mean[2] += cChannel;
                         
-                        numberOfPixels++;
+                        
                     }
+                    numberOfPixels++;
+                    //else
+                      //  cout << "notrange - x:" << x << " y:" <<y << " w:" <<image.cols<<  " h:" <<image.rows << endl;
                 }
             }
+            
             
             //Mean
             this->mean[0] = mean[0]/numberOfPixels;
             this->mean[1] = mean[1]/numberOfPixels;
             this->mean[2] = mean[2]/numberOfPixels;
             
+            
             for (int i = x-3; i < x+2; i++){
                 for(int j = y-3; j < y+2 ; j++){
                     
-                    if(isInRange(i,j,image.cols,image.rows)){
+                    if(isInRange(i,j,image.rows,image.cols)){
                         Vec3b pixel = image.at<Vec3b>(i,j);
                         int aChannel    = int( pixel.val[0] );
                         int bChannel    = int( pixel.val[1] );
@@ -90,15 +101,42 @@ class ColorMoments{
             this->variance[0] = pow( (var[0]/numberOfPixels) ,0.5);
             this->variance[1] = pow( (var[1]/numberOfPixels) ,0.5);
             this->variance[2] = pow( (var[1]/numberOfPixels) ,0.5);
+            
+            
+            
         }
         
-        bool isInRange(int x, int y,int h,int w){
-            if( (x < 0) or (y < 0) )
+        void getColorMoments(Mat& image,vector<KeyPoint>& kp,vector<ColorMoments>& colorMoments){
+            
+            for(int i = 0; i < kp.size(); i++){
+                ColorMoments* cm = this->createColorMoments(image,kp[i]);
+                colorMoments.push_back(*cm);
+            }
+        }
+        
+        ColorMoments* createColorMoments(Mat& image, KeyPoint& kp){
+            
+            this->computeMoments(image,kp);
+            return new ColorMoments(this->mean,this->variance);
+            
+        }
+        
+        void printValues(){
+            cout << endl << "ColorMoment" << endl;
+            cout << mean[0] << ' ' << mean[1] << ' ' << mean[2] << endl;
+            cout << variance[0] << ' ' << variance[1] << ' ' << variance[2] << endl;
+        }
+        
+        inline bool isInRange(int i, int j,int rows,int cols){
+            if( (i < 0) or (j < 0) ){
                 return false;
-            if(x >= h)
+            }
+            if(j >= cols){
                 return false;
-            if(y >= w)
+            }
+            if(i >= rows){
                 return false;
+            }
             
             return true;
         }

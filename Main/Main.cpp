@@ -63,7 +63,7 @@ int main(int argc, char** argv){
 
     
     loadTrainImages(grayTrainImages,colorTrainImages,imagesClasses);
-    
+
     //ch.createHistograms(colorTrainImages,imagesClasses);
     //vector<vector<float> > imagesHist = ch.getHistograms();
     /*
@@ -96,10 +96,15 @@ int main(int argc, char** argv){
     
     //BoFC
     BoFC bofc;
+
+    bofc.loadTrainImages(grayTrainImages,colorTrainImages,imagesClasses);
+    bofc.runTraining();
+    bofc.saveDictionary();
+    //bofc.loadDictionary("BOFC-Dictionary-70.xml");
     
     
     //Train SVM bow
-    SVMClass svm(classSet);
+    //SVMClass svm(classSet);
     //svm.train(bow.getImagesAttributes(),imagesClasses);
     //svm.saveModel("BoWsvmModel.xml");
     
@@ -114,10 +119,10 @@ int main(int argc, char** argv){
     
     //---------------SVM train---------------------------//
     
-    SVMClass svmh(classSet);
+    //SVMClass svmh(classSet);
     //svmh.train(imagesHist,imagesClasses);
     //svmh.saveModel("HSVColorHistogramSvmModel.xml");
-    svmh.loadModel("HSVColorHistogramSvmModel.xml");
+    //svmh.loadModel("HSVColorHistogramSvmModel.xml");
     
     
     //for(int i = 0 ; i < colorTrainImages.size(); i++){
@@ -168,7 +173,7 @@ void loadTestImages(vector<Mat>& grayTestImages, vector<Mat>& colorTestImages,ve
         string path = imagesPaths[i];
         Mat grayImg = imread(path,CV_LOAD_IMAGE_GRAYSCALE);
         Mat colorImg  = imread(path,CV_LOAD_IMAGE_COLOR);
-        
+    
         if(grayImg.empty() || colorImg.empty())
             cout << "Test image " << path.c_str() << "can not be read.";
         else{
