@@ -15,6 +15,7 @@
 #include "../SVM/SVM.h"
 #include "../BoFC/BoFC.h"
 #include "../ColorHistogram/ColorHistogram.h"
+#include "../BoCW/BoCW.h"
 
 using namespace cv;
 using namespace std;
@@ -43,30 +44,31 @@ bool createDetectorDescriptorMatcher(Ptr<FeatureDetector>& featureDetector,Ptr<D
 
 
 enum Fish{
-  Dourado,Oscar,Tucunare  
+  Dourado,Oscar,Tucunare
 };
 
 int main(int argc, char** argv){
-    
+
     BoW bow(detectorType,descriptorType,matcherType,hessianThreshold,dictionarySize);
-    
+
     ColorHistogram ch(2,_HSVColorSpace,false,false,true);
-    
+
     //Train Images
     vector<Mat>                 grayTrainImages;
     vector<Mat>                 colorTrainImages;
     //Test Images
     vector<Mat>                 grayTestImages;
     vector<Mat>                 colorTestImages;
-    
+
     vector<string>              imagesClasses;
 
-    
+
     loadTrainImages(grayTrainImages,colorTrainImages,imagesClasses);
 
+    /*
     //ch.createHistograms(colorTrainImages,imagesClasses);
     //vector<vector<float> > imagesHist = ch.getHistograms();
-    /*
+
     for(int i = 0 ; i < imagesHist.size(); i++){
       for(int j = 0 ; j < imagesHist[i].size(); j++)
         cout << imagesHist[i][j] << " " ;
@@ -74,10 +76,10 @@ int main(int argc, char** argv){
     }
     */
     //BOW
-    
+
     //bow.loadTrainImages(grayTrainImages,imagesClasses);
     //bow.runTraining();
-    
+
     /*bow.trainFeaturesDetect();
     bow.trainKeyPointsDescriptors();
     bow.createVocabulary();
@@ -86,28 +88,55 @@ int main(int argc, char** argv){
     bow.createImagesAttributes();
     */
     //bow.loadDictionary("Dictionary-16.xml");
-    
-    
+
+
     //test
     //bow.createImageAttribute(grayTrainImages[8]);
-    
-    //Mat testImage = bow.getImagesAttributesOfTestImage();
-    
-    
-    //BoFC
-    BoFC bofc;
 
-    bofc.loadTrainImages(grayTrainImages,colorTrainImages,imagesClasses);
-    bofc.runTraining();
-    bofc.saveDictionary();
-    //bofc.loadDictionary("BOFC-Dictionary-70.xml");
-    
-    
+    //Mat testImage = bow.getImagesAttributesOfTestImage();
+
+
+    /*BoFC
+        BoFC bofc;
+
+        bofc.loadTrainImages(grayTrainImages,colorTrainImages,imagesClasses);
+        bofc.runTraining();
+        bofc.saveDictionary();
+        bofc.loadDictionary("BOFC-Dictionary-70.xml");
+    */
+
+
+    /*BoCW*/
+        BoCW bocw;
+        bocw.loadTrainImages(grayTrainImages,colorTrainImages,imagesClasses);
+        bocw.runTraining();
+        bocw.saveDictionary();
+        vector<vector<float> > features = bocw.getImagesAttributes();
+
+        for (int i = 0; i < features.size(); i ++){
+            cout << i << " -> ";
+            for(int j = 0; j < features[i].size(); j ++){
+                cout  <<" " << features[i][j];
+            }
+            cout << endl;
+        }
+
+        BoCW bocw2;
+        bocw2.loadDictionary("BoCWDictionary-64.xml");
+        bocw2.createTestImageAttribute(grayTrainImages[1],colorTrainImages[1]);
+        vector<float> featurest = bocw2.getImagesAttributesOfTestImage();
+        cout << "test" << endl;
+        for(int j = 0; j < featurest.size(); j ++){
+            cout  <<" " << featurest[j];
+        }
+
+
+
     //Train SVM bow
     //SVMClass svm(classSet);
     //svm.train(bow.getImagesAttributes(),imagesClasses);
     //svm.saveModel("BoWsvmModel.xml");
-    
+
     //---------------Test SVM BOW-------------------------//
     //bow.loadDictionary("Dictionary-16.xml");
     //bow.createImageAttribute(grayTrainImages[0]);
@@ -115,65 +144,65 @@ int main(int argc, char** argv){
     //
     //svm.loadModel("BoWsvmModel.xml");
     //cout << "RESPONSE: " << svm.predict(d) << endl;
-    
-    
+
+
     //---------------SVM train---------------------------//
-    
+
     //SVMClass svmh(classSet);
-    //svmh.train(imagesHist,imagesClasses);
+    //svmh.train(features,imagesClasses);
     //svmh.saveModel("HSVColorHistogramSvmModel.xml");
     //svmh.loadModel("HSVColorHistogramSvmModel.xml");
-    
-    
+
+
     //for(int i = 0 ; i < colorTrainImages.size(); i++){
     //  vector<float> hf = ch.createHistogram(colorTrainImages[i]);
     //  cout << "class: " << svmh.predict(hf) << endl;
     //}
 
-      
-          
+
+
 
     //cout << endl << "Class: " << svm2.predict(testImage) << endl;
-    
+
     //loadTestImages(grayTestImages,colorTestImages);
     //bow.loadTestImages(grayTestImages);
-    
+
     //bow.createImageAttribute(grayTestImages.at(0),"lol");
     //drawKeypoints( grayTestImages[0], keyPoints, grayTestImages[0], Scalar(0, 0, 255), DrawMatchesFlags::DRAW_RICH_KEYPOINTS);
     //imshow("Key Points", grayTestImages[0]);
-    
+
     //bow.loadTestImages(grayTestImages);
     //featureDetector->detect(grayTrainImages,trainKeyPoints);
-    
-   
-    
+
+
+
     //vector<vector<KeyPoint> > kp = bow.getTrainKeyPoints();
-    
+
     //for (size_t i = 0; i < colorTrainImages.size(); i++){
     //    //drawKeypoints( colorTrainImages[i], kp[i], colorTrainImages[i], Scalar(0, 0, 255), DrawMatchesFlags::DRAW_RICH_KEYPOINTS);
    //     imshow("Key Points", grayTrainImages[i]);
     //    waitKey(0);
     //}
 
-    
+
 }
 
 
 
 
 void loadTestImages(vector<Mat>& grayTestImages, vector<Mat>& colorTestImages,vector<string>& imagesClasses){
-    
+
     vector<string> imagesPaths;
     readImagesPaths(imagesPaths,imagesClasses,true);
-    
+
     cout << endl << "Loading test images...." << endl;
-    
+
     for(size_t i = 0; i < imagesPaths.size(); i++){
-        
+
         string path = imagesPaths[i];
         Mat grayImg = imread(path,CV_LOAD_IMAGE_GRAYSCALE);
         Mat colorImg  = imread(path,CV_LOAD_IMAGE_COLOR);
-    
+
         if(grayImg.empty() || colorImg.empty())
             cout << "Test image " << path.c_str() << "can not be read.";
         else{
@@ -181,26 +210,26 @@ void loadTestImages(vector<Mat>& grayTestImages, vector<Mat>& colorTestImages,ve
             colorTestImages.push_back(colorImg);
         }
     }
-    
+
     cout << "Load complete!." << endl;
-    
-    
+
+
 }
 
 void loadTrainImages(vector<Mat>& grayTrainImages, vector<Mat>& colorTrainImages,vector<string>& imagesClasses){
-    
+
     vector<string> imagesPaths;
     vector<string> imagesClass;
     readImagesPaths(imagesPaths,imagesClasses,false);
-    
+
     cout << endl << "Loading train images...." << endl;
-    
+
     for(size_t i = 0; i < imagesPaths.size(); i++){
-        
+
         string path         = imagesPaths[i];
         Mat grayImg         = imread(path,CV_LOAD_IMAGE_GRAYSCALE);
         Mat colorImg        = imread(path,CV_LOAD_IMAGE_COLOR);
-        
+
         if(grayImg.empty() || colorImg.empty())
             cout << "Train image " << path.c_str() << "can not be read.";
         else{
@@ -209,18 +238,18 @@ void loadTrainImages(vector<Mat>& grayTrainImages, vector<Mat>& colorTrainImages
             colorTrainImages.push_back(colorImg);
         }
     }
-    
+
     cout << "Load complete!." << endl;
-    
+
 }
 
 void readImage(vector<string>& imagesPath,vector<string>& imagesClasses,string rootFolder, string classFolder){
-    
+
     string command = "ls "+rootFolder+"/"+classFolder+" > temp.txt";
     system(command.c_str());
-    
+
     ifstream file("temp.txt");
-    
+
     for(string line; getline(file,line);){
         string path = rootFolder+"/"+classFolder+"/"+line;
         imagesPath.push_back(path);
@@ -229,19 +258,19 @@ void readImage(vector<string>& imagesPath,vector<string>& imagesClasses,string r
 }
 
 void readImagesPaths(vector<string>& imagesPaths,vector<string>& imagesClasses, bool isTest){
-    
+
     string folder = isTest ? TestFolder : TrainFolder;
-    
+
     string command = "ls " + folder + " > " + fileWithClassesNames;
     system(command.c_str());
-    
-    cout << endl << "The File:" << fileWithClassesNames << " contains all class names." << endl; 
-    
+
+    cout << endl << "The File:" << fileWithClassesNames << " contains all class names." << endl;
+
     ifstream file(fileWithClassesNames.c_str());
-    
+
     if(!file.is_open())
         return;
-    
+
     for(string line; getline(file,line);){
         classSet.push_back(line);
         readImage(imagesPaths,imagesClasses,folder,line);
@@ -249,15 +278,15 @@ void readImagesPaths(vector<string>& imagesPaths,vector<string>& imagesClasses, 
 
     //Sort images names.
     sort( imagesPaths.begin() , imagesPaths.end());
-    
+
 }
 
 
 
 void printStringVector(vector<string>& vector){
-    
+
     cout << "String Vector:" <<  endl;
-    
+
     for (size_t i = 0; i < vector.size() ; i++){
         cout << "   " << vector[i].c_str() << endl;
     }

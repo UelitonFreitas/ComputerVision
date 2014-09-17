@@ -1,5 +1,5 @@
-#ifndef __BOW_H
-#define __BOW_H
+#ifndef __BOCW_H
+#define __BOCW_H
 
 #include <opencv/cv.h>
 #include <opencv/cxcore.h>
@@ -10,11 +10,15 @@
 #include "opencv2/ml/ml.hpp"
 #include <stdlib.h>
 
+#include "ColorMoments.h"
+#include "../ColorHistogram/ColorHistogram.h"
+
 using namespace cv;
 using namespace std;
 
 
-class BoW{
+
+class BoCW{
 
     private:
         int                         dictionarySize;     //BoW dictionary size.
@@ -27,6 +31,8 @@ class BoW{
         vector< vector<KeyPoint> >  trainKeyPoints;     //Vector of keypoints of each image.
         vector<string>*             imagesClass;
 
+        ColorHistogram*             colorHistogram;     //Color Histogram
+        vector<float>               testImageFeatures;
 
         vector<Mat>*                testImages;         //Vector of test images.
         vector<Mat>                 testDescriptors;    //Vector of test Descriptors;
@@ -50,7 +56,7 @@ class BoW{
 
     public:
 
-        BoW(string  detectorType = "SURF", string  descriptorType = "SURF",string  matcherType  = "FlannBased",float   hessianThreshold = 0.1,int dicSize = 64){
+        BoCW(string  detectorType = "SURF", string  descriptorType = "SURF",string  matcherType  = "FlannBased",float   hessianThreshold = 0.1,int dicSize = 64){
 
             this->detectorType = detectorType;
             this->descriptorType =descriptorType;
@@ -68,7 +74,9 @@ class BoW{
 
             this->bowDE = new BOWImgDescriptorExtractor(this->descriptorExtractor,this->descriptorMatcher);
 
-            this->tag = "Bag Of Words: ";
+            this->tag = "Bag Of Colored Words: ";
+
+            this->colorHistogram    =   new ColorHistogram();
         }
 
 
@@ -86,6 +94,21 @@ class BoW{
                 cout << endl<< this->tag << "You have to load train imagens and class names.";
             }
         }
+
+        void createTestImageAttribute(Mat& image,Mat& colorImage){
+
+            vector<KeyPoint> keyPoints;
+            Mat bowDescriptor;
+
+            this->featureDetector->detect(image,keyPoints);
+
+            this->bowDE->compute(image,keyPoints,bowDescriptor);
+
+            this->testImageFeatures = this->colorHistogram->createHistogram(colorImage);
+
+            this->imageAttributes.push_back(bowDescriptor);
+        }
+
 
         void createImageAttribute(Mat& image){
 
@@ -117,10 +140,13 @@ class BoW{
 
         }
 
-        void loadTrainImages(vector<Mat>& images,vector<string>& imagesClass){
+        void loadTrainImages(vector<Mat>& images,vector<Mat>& colorImages,vector<string>& imagesClass){
             cout << endl << this->tag << "Loading images..." << endl;
             this->trainImages = new vector<Mat>(images);
             this->imagesClass = new vector<string>(imagesClass);
+
+            this->colorHistogram->createHistograms(colorImages,imagesClass);
+
             cout << "Complete!!!" << endl;
         }
 
@@ -178,7 +204,7 @@ class BoW{
         void saveDictionary(){
 
             cout << tag << "Saving Dictionary with size: " << this->dictionarySize << " ...." <<endl;
-            sprintf(this->fileName,"Dictionary-%02d.xml",this->dictionarySize);
+            sprintf(this->fileName,"BoCWDictionary-%02d.xml",this->dictionarySize);
 
             FileStorage file(this->fileName, FileStorage::WRITE);
 
@@ -206,22 +232,25 @@ class BoW{
             return this->trainKeyPoints;
         }
 
-        /*
-        vector<Mat>& getImagesAttributes(){
-            return this->imageAttributes;
-        }
-        */
 
         // TESTAR PARA IMPLEMENTAR PADRÃO DE COMUNICAÇÃO
         vector<vector<float> >& getImagesAttributes(){
 
             int     numberOfImages  = this->imageAttributes.size();
-            vector<vector<float> >*  features = new  vector<vector<float> >(numberOfImages,vector<float>(this->dictionarySize));
+            vector<vector<float> >       colors      = this->colorHistogram->getHistograms();
+             vector<vector<float> >*     features    = new  vector<vector<float> >(numberOfImages,vector<float>(this->dictionarySize + colors[0].size()));
+
 
             for(int i = 0; i <  numberOfImages; i++){
                 Mat row = this->imageAttributes[i].row(0);
                 for(int k = 0 ; k < row.cols; k++){
-                    (features->at(i)).at(k) = (float)row.data[k];
+                        (features->at(i)).at(k) = (float)row.data[k];
+                }
+            }
+
+            for(int i = 0; i <  numberOfImages; i++){
+                for(int k = this->dictionarySize ; k < this->dictionarySize + colors[0].size(); k++){
+                       (features->at(i)).at(k) = colors[i][k];
                 }
             }
 
@@ -230,23 +259,29 @@ class BoW{
 
         vector<float>& getImagesAttributesOfTestImage(){
 
-            vector<float>* feature = new vector<float>(this->dictionarySize);
+            vector<float>* feature = new vector<float>(this->dictionarySize + this->testImageFeatures.size());
+
             Mat row = this->imageAttributes[0].row(0);
             for(int k = 0 ; k < row.cols; k++){
                 feature->at(k) = (float)row.data[k];
+
             }
+
+            for(int k = row.cols ; k < row.cols + this->testImageFeatures.size(); k++){
+                feature->at(k) = (float)this->testImageFeatures[k];
+            }
+
+
+
+
 
             return *feature;
         }
 
-        /*
-        Mat& getImagesAttributesOfTestImage(){
-            return this->imageAttributes[0];
-        }
-        */
+
+
+
 };
-
-
 
 
 #endif
