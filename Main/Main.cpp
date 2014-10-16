@@ -80,13 +80,13 @@ int main(int argc, char** argv){
     //bow.loadTrainImages(grayTrainImages,imagesClasses);
     //bow.runTraining();
 
-    /*bow.trainFeaturesDetect();
+    bow.trainFeaturesDetect();
     bow.trainKeyPointsDescriptors();
     bow.createVocabulary();
     bow.setVocabularyOnImageDescriptor();
     bow.saveDictionary();
     bow.createImagesAttributes();
-    */
+    
     //bow.loadDictionary("Dictionary-16.xml");
 
 
@@ -107,7 +107,7 @@ int main(int argc, char** argv){
 
 
     /*BoCW*/
-        BoCW bocw;
+        /*BoCW bocw;
         bocw.loadTrainImages(grayTrainImages,colorTrainImages,imagesClasses);
         bocw.runTraining();
         bocw.saveDictionary();
@@ -120,16 +120,7 @@ int main(int argc, char** argv){
             }
             cout << endl;
         }
-
-        BoCW bocw2;
-        bocw2.loadDictionary("BoCWDictionary-64.xml");
-        bocw2.createTestImageAttribute(grayTrainImages[1],colorTrainImages[1]);
-        vector<float> featurest = bocw2.getImagesAttributesOfTestImage();
-        cout << "test" << endl;
-        for(int j = 0; j < featurest.size(); j ++){
-            cout  <<" " << featurest[j];
-        }
-
+	*/
 
 
     //Train SVM bow
