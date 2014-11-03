@@ -25,63 +25,61 @@ class BoCW{
         BOWKMeansTrainer*           bowTrainer;         //Bow Trainer.
         Mat                         dictionary;         //BoW dictionary.
         BOWImgDescriptorExtractor   *bowDE;             //BoW image descriptor. For testing.
-
+        
         vector<Mat>*                trainImages;        //Vector of images.
         vector<Mat>                 trainDescriptors;   //Vector of keypoints descriptors.
         vector< vector<KeyPoint> >  trainKeyPoints;     //Vector of keypoints of each image.
         vector<string>*             imagesClass;
-
+        
         ColorHistogram*             colorHistogram;     //Color Histogram
         vector<float>               testImageFeatures;
-
+        
         vector<Mat>*                testImages;         //Vector of test images.
         vector<Mat>                 testDescriptors;    //Vector of test Descriptors;
         vector< vector<KeyPoint> >  testKeyPoints;      //Vector fo test Keypoints;
-
+        
         vector<Mat>                 imageAttributes;
 
         Ptr<FeatureDetector>        featureDetector;    //Default: Surf
         Ptr<DescriptorExtractor>    descriptorExtractor;
         Ptr<DescriptorMatcher>      descriptorMatcher;
-
-
+        
         string  detectorType;       //Default SURF.
         string  descriptorType;     //Default SURF.
         string  matcherType;        //Default FLANN
         float    hessianThreshold;  //Theshold, the larger value, less keypoints.
-
-
+        
+        
         string tag;
         char fileName[100];         //Name of dictionary to be saved;
-
+        
     public:
-
-        BoCW(string  detectorType = "SURF", string  descriptorType = "SURF",string  matcherType  = "FlannBased",float   hessianThreshold = 0.1,int dicSize = 64){
-
+        
+        BoCW(string  detectorType = "SURF", string  descriptorType = "SURF",string  matcherType  = "FlannBased",float hessianThreshold = 0.1,int dicSize = 2, int binSize = 4){
+            
             this->detectorType = detectorType;
-            this->descriptorType =descriptorType;
+            this->descriptorType = descriptorType;
             this->matcherType = matcherType;
             this->hessianThreshold =hessianThreshold;
-
+            
             this->dictionarySize = dicSize;
-            TermCriteria tc(CV_TERMCRIT_ITER,100,0.001);
-            int retries=1;
-            int flags=KMEANS_PP_CENTERS;
-
+            TermCriteria tc(CV_TERMCRIT_ITER, 100, 0.001);
+            int retries = 1;
+            int flags = KMEANS_PP_CENTERS;
+            
             this->createDetectorDescriptorMatcher();
-
+            
             this->bowTrainer = new BOWKMeansTrainer(this->dictionarySize, tc, retries, flags );
-
+            
             this->bowDE = new BOWImgDescriptorExtractor(this->descriptorExtractor,this->descriptorMatcher);
-
+            
             this->tag = "Bag Of Colored Words: ";
-
-            this->colorHistogram    =   new ColorHistogram();
+        
+            this->colorHistogram = new ColorHistogram(binSize);
         }
-
-
+        
         void runTraining(){
-
+            
             if(this->trainImages != NULL and this->imagesClass != NULL){
                 this->trainFeaturesDetect();
                 this->trainKeyPointsDescriptors();
@@ -94,83 +92,80 @@ class BoCW{
                 cout << endl<< this->tag << "You have to load train imagens and class names.";
             }
         }
-
+        
         void createTestImageAttribute(Mat& image,Mat& colorImage){
-
+            
             vector<KeyPoint> keyPoints;
             Mat bowDescriptor;
-
+            
             this->featureDetector->detect(image,keyPoints);
-
+            
             this->bowDE->compute(image,keyPoints,bowDescriptor);
-
+            
             this->testImageFeatures = this->colorHistogram->createHistogram(colorImage);
-
+            
             this->imageAttributes.push_back(bowDescriptor);
         }
-
-
+        
         void createImageAttribute(Mat& image){
-
+            
             vector<KeyPoint> keyPoints;
             Mat bowDescriptor;
-
+            
             this->featureDetector->detect(image,keyPoints);
-
-
+            
             this->bowDE->compute(image,keyPoints,bowDescriptor);
-
+            
             this->imageAttributes.push_back(bowDescriptor);
         }
-
+        
         void setVocabularyOnImageDescriptor(){
             this->bowDE->setVocabulary(this->dictionary);
         }
-
+        
         void createImagesAttributes(){
-
-
+        
             //this->setVocabulary();
-
+            
             cout << endl << this->tag << "Creating images Attributes..." << endl;
             for(int i = 0; i < this->trainImages->size() ; i++){
                 this->createImageAttribute( this->trainImages->at(i));
             }
+            
             cout << "Complete!!" << endl;
-
+        
         }
-
+        
         void loadTrainImages(vector<Mat>& images,vector<Mat>& colorImages,vector<string>& imagesClass){
             cout << endl << this->tag << "Loading images..." << endl;
             this->trainImages = new vector<Mat>(images);
             this->imagesClass = new vector<string>(imagesClass);
-
+            
             this->colorHistogram->createHistograms(colorImages,imagesClass);
-
+            
             cout << "Complete!!!" << endl;
         }
-
+        
         void trainFeaturesDetect(){
             cout << endl << this->tag << "Detecting keypoints of " << this->trainImages->size() << " images." << endl;
             this->featureDetector->detect(*(this->trainImages),this->trainKeyPoints);
             cout << "Complete!!!" << endl;
         }
-
+        
         void trainKeyPointsDescriptors(){
-
+        
             cout << endl << this->tag << "Describing Key Points...." << endl;
             this->descriptorExtractor->compute(*(this->trainImages),this->trainKeyPoints,this->trainDescriptors);
             cout << "Complete!!!" << endl;
-
+        
         }
-
-
+        
         void createVocabulary(){
-
+            
             cout << endl << this->tag << "Creating vocabulary...." << endl;
-
+            
             for(size_t i = 0 ; i < this->trainDescriptors.size(); i++){
-
+                
                 Mat descriptor = this->trainDescriptors[i];
                 for(int j = 0; j < descriptor.rows; j++){
                     this->bowTrainer->add(descriptor.row(j));
@@ -178,18 +173,15 @@ class BoCW{
             }
             cout << this->tag <<  "Appliyng k-means..." << endl;
             this->dictionary = this->bowTrainer->cluster();
-
-
+            
             cout << this->tag << "Dictionary created with size " << this->dictionarySize << endl;
-
-
         }
-
+        
         void loadDictionary(string fileName){
-
+            
             //this->fileName = fileName;
             FileStorage file(fileName, FileStorage::READ);
-
+            
             if(file.isOpened()){
                 cout << tag << "Loading Dictionary with size: " << this->dictionarySize << " ...." <<endl;;
                 file["dictionary"] >> this->dictionary;
@@ -197,17 +189,16 @@ class BoCW{
             }
             else
                 cout << this->tag << "Cannot load the dictionary file." << endl;
-
+            
         }
-
-
+        
         void saveDictionary(){
-
+            
             cout << tag << "Saving Dictionary with size: " << this->dictionarySize << " ...." <<endl;
             sprintf(this->fileName,"BoCWDictionary-%02d.xml",this->dictionarySize);
-
+            
             FileStorage file(this->fileName, FileStorage::WRITE);
-
+            
             if(file.isOpened()){
                 file << "dictionary" << this->dictionary;
                 cout << tag << "Dictionary saved!! " << endl;
@@ -215,7 +206,7 @@ class BoCW{
             else
                 cout << "Can create dictionary file!!" << endl;
         }
-
+        
         bool createDetectorDescriptorMatcher(){
             initModule_nonfree();
             this->featureDetector     = FeatureDetector::create(detectorType);
@@ -235,47 +226,51 @@ class BoCW{
 
         // TESTAR PARA IMPLEMENTAR PADRÃO DE COMUNICAÇÃO
         vector<vector<float> >& getImagesAttributes(){
-
-            int     numberOfImages  = this->imageAttributes.size();
-            vector<vector<float> >       colors      = this->colorHistogram->getHistograms();
-             vector<vector<float> >*     features    = new  vector<vector<float> >(numberOfImages,vector<float>(this->dictionarySize + colors[0].size()));
-
-
+            
+            int numberOfImages  = this->imageAttributes.size();
+            
+            vector<vector<float> > colors = this->colorHistogram->getHistograms();
+            int histVecSize = colors[0].size();
+            
+             vector<vector<float> >* features = new  vector<vector<float> >(numberOfImages,vector<float>(this->dictionarySize + colors[0].size()));
+            
             for(int i = 0; i <  numberOfImages; i++){
                 Mat row = this->imageAttributes[i].row(0);
                 for(int k = 0 ; k < row.cols; k++){
                         (features->at(i)).at(k) = (float)row.data[k];
                 }
-            }
-
-            for(int i = 0; i <  numberOfImages; i++){
-                for(int k = this->dictionarySize ; k < this->dictionarySize + colors[0].size(); k++){
-                       (features->at(i)).at(k) = colors[i][k];
+                
+                //Fill hisgram data on feature vector
+                for(int k = 0 ; k < histVecSize; k++){
+                    (features->at(i)).at(k+row.cols) = colors[i][k];
                 }
             }
-
+            
+            
             return *features;
         }
-
+        
         vector<float>& getImagesAttributesOfTestImage(){
-
+            
             vector<float>* feature = new vector<float>(this->dictionarySize + this->testImageFeatures.size());
-
+            
             Mat row = this->imageAttributes[0].row(0);
+            
             for(int k = 0 ; k < row.cols; k++){
-                feature->at(k) = (float)row.data[k];
-
+                feature->at(k) = (float)row.data[k];            
             }
-
+                
             for(int k = row.cols ; k < row.cols + this->testImageFeatures.size(); k++){
                 feature->at(k) = (float)this->testImageFeatures[k];
             }
-
-
-
-
-
+            
             return *feature;
+        }
+        
+        string& getArffFileName(){
+            char c[200];
+            sprintf(c,"BoCW_Dictionary_%02d.arff",this->dictionarySize);
+            return *(new string(c));
         }
 
 

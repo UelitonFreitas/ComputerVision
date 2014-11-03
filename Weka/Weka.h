@@ -1,0 +1,128 @@
+
+#ifndef __WEKA_H
+#define __WEKA_H
+
+#include <stdlib.h>
+#include <string.h>
+#include <sstream>
+
+/*
+ *  TEM QUE MELHORAR ESSA @#@#@@!#!!!!
+ *  TIRAR A LISTA DE ARQUIVOS
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ **/
+
+
+using namespace std;
+
+class Weka{
+
+public:
+
+    String dataFolder;
+    String dataSetName;
+    int dictionarySize;
+    ofstream out; // output file
+    ofstream out1;
+    ofstream out2;
+    vector<ofstream*> files;
+    vector<string> fileNames;
+
+    Weka(string dataFolder = "../Data/", int numberOfFiles = 1){
+        this->dataFolder = dataFolder;
+        this->dataSetName = "fish";
+        this->files = vector<ofstream*>(numberOfFiles,NULL);
+        this->fileNames = vector<string>(numberOfFiles,"");
+
+    }
+    
+    ~Weka() {
+        
+        for (int i = 0; i < this->files.size(); i++){
+            
+            if(this->files[i] != NULL and this->files[i]->is_open()){
+                this->files[i]->close();
+            }
+        }
+    }
+
+    //OPen a file with mode
+    void openFile(string fileName, int fileIndex = 0){
+        
+        this->files[fileIndex] = new ofstream((this->dataFolder+fileName).c_str());
+        
+        if(!this->files[fileIndex]->is_open()){
+            cout << "Erro on create file:" + fileName << endl;
+        }
+        else
+            cout << endl << fileName <<" file created: " <<  (this->dataFolder+fileName).c_str() << endl;
+    }
+
+    
+    void insertArffHeader(vector<String> classesNames, int numberOfAttributes = 0,int fileIndex = 0) {
+
+ 
+        *this->files[fileIndex] << "% ARFF containing Bow Feature for all " << this->dataSetName << " images" << endl;
+        *this->files[fileIndex] << endl;
+        *this->files[fileIndex] << "@relation " << this->dataSetName << "_Dic" <<numberOfAttributes << endl;
+        *this->files[fileIndex] << endl;
+       
+        for ( int i = 0; i < numberOfAttributes; ++i) {
+            *this->files[fileIndex] << "@attribute A" << i+1 << " numeric" << endl;
+        }
+
+        *this->files[fileIndex] << "@attribute class {";
+        for ( int i = 0; i < classesNames.size()-1; ++i) {
+            *this->files[fileIndex] << classesNames[i] << ",";
+        }
+        *this->files[fileIndex] << classesNames[classesNames.size()-1] << "}" << endl;
+
+        *this->files[fileIndex] << endl;
+        *this->files[fileIndex] << "@data" << endl;
+        
+    }   
+
+    void insertArffInstance(Mat& bowDescriptor, String className,int fileIndex = 0) {
+        double binValue;
+        for ( int i = 0; i < bowDescriptor.rows; ++i) {
+            Mat row = bowDescriptor.row(i);
+            for ( int j = 0; j < row.cols; ++j) {
+                binValue = row.data[j];
+                *this->files[fileIndex] << binValue << ",";
+            }
+        }
+        *this->files[fileIndex] << className << endl;
+    }
+
+
+    void insertArffInstances(vector<vector<float> >& data, vector<string>& classAttribute,int fileIndex = 0) {
+        
+        for (int i = 0 ; i < data.size(); i++){
+                for (int j = 0 ; j < data[i].size(); j++){
+                     *this->files[fileIndex] << data[i][j] << ",";
+                }
+                *this->files[fileIndex] << classAttribute[i] << endl;
+        }
+         
+    } 
+
+    void insertArffInstances(vector<float>& data, string classAttribute,int fileIndex = 0) {
+        
+        for (int i = 0 ; i < data.size(); i++){
+            *this->files[fileIndex] << data[i] << ",";
+        }
+        *this->files[fileIndex] << classAttribute << endl; 
+    }
+    
+};
+
+#endif

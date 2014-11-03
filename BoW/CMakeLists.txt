@@ -1,5 +1,0 @@
-cmake_minimum_required(VERSION 2.8)
-project( BoW )
-find_package( OpenCV REQUIRED )
-add_executable( BoW BoW.cpp )
-target_link_libraries( BoW ${OpenCV_LIBS} )

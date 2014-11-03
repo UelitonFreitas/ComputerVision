@@ -94,7 +94,6 @@ class BoW{
 
             this->featureDetector->detect(image,keyPoints);
 
-
             this->bowDE->compute(image,keyPoints,bowDescriptor);
 
             this->imageAttributes.push_back(bowDescriptor);
@@ -235,10 +234,15 @@ class BoW{
             for(int k = 0 ; k < row.cols; k++){
                 feature->at(k) = (float)row.data[k];
             }
-
+            
             return *feature;
         }
-
+        
+        string& getArffFileName(){
+            char c[200];
+            sprintf(c,"BoW_Dictionary_%02d.arff",this->dictionarySize);
+            return *(new string(c));
+        }
         /*
         Mat& getImagesAttributesOfTestImage(){
             return this->imageAttributes[0];

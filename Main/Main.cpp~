@@ -16,6 +16,7 @@
 #include "../BoFC/BoFC.h"
 #include "../ColorHistogram/ColorHistogram.h"
 #include "../BoCW/BoCW.h"
+#include "../Weka/Weka.h"
 
 using namespace cv;
 using namespace std;
@@ -49,6 +50,7 @@ enum Fish{
 
 int main(int argc, char** argv){
 
+    Weka weka;
     BoW bow(detectorType,descriptorType,matcherType,hessianThreshold,dictionarySize);
 
     ColorHistogram ch(2,_HSVColorSpace,false,false,true);
@@ -77,10 +79,20 @@ int main(int argc, char** argv){
     */
     //BOW
 
-    //bow.loadTrainImages(grayTrainImages,imagesClasses);
-    //bow.runTraining();
-
-    /*bow.trainFeaturesDetect();
+	size_t i = grayTrainImages.size();
+	cout <<"i: " << i << endl;
+    bow.loadTrainImages(grayTrainImages,imagesClasses);
+    bow.runTraining();
+	
+    string f = bow.getArffFileName();
+    
+    weka.openFile(f);
+    weka.insertArffHeader(imagesClasses,dictionarySize);
+    
+    weka.insertArffInstances(bow.getImagesAttributes(),imagesClasses);
+    
+    /*
+    bow.trainFeaturesDetect();
     bow.trainKeyPointsDescriptors();
     bow.createVocabulary();
     bow.setVocabularyOnImageDescriptor();

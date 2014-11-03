@@ -16,29 +16,29 @@
 #include "../BoFC/BoFC.h"
 #include "../ColorHistogram/ColorHistogram.h"
 #include "../BoCW/BoCW.h"
+#include "../Weka/Weka.h"
 
 using namespace cv;
 using namespace std;
 
-string          TrainFolder             = "TrainImages";
-string          TestFolder              = "TestImages";
-string          TrainImages             = "TrainImages.txt";
-string          fileWithClassesNames    = "Classes.txt";
-vector<string>  classSet;
+string TrainFolder = "DeveloperTestImages";
+string TestFolder = "TestImages";
+string TrainImages = "TrainImages.txt";
+string fileWithClassesNames = "Classes.txt";
 
-string  detectorType        = "SURF";
-string  descriptorType      = "SURF";
-string  matcherType         = "FlannBased";
-float   hessianThreshold    = 0.1;
-int     dictionarySize      = 16;
+string detectorType = "SURF";
+string descriptorType = "SURF";
+string matcherType = "FlannBased";
+float hessianThreshold = 0.1;
+int dictionarySize = 16;
 
 string getImageClass(string imagePath);
 int getClassNumber(String fileImageName);
 
 void readImage(vector<string>& images,string folder, string className);
-void readImagesPaths(vector<string>& imagesPaths,vector<string>& imagesClasses, bool isTest);
+void readImagesPaths(vector<string>& imagesPaths, vector<string>& imagesClasses, vector<string>& classNames, bool isTest);
 void printStringVector(vector<string>& vector);
-void loadTrainImages(vector<Mat>& grayTrainImages, vector<Mat>& colorTrainImages,vector<string>& imagesClasses);
+void loadTrainImages(vector<Mat>& grayTrainImages, vector<Mat>& colorTrainImages,vector<string>& imagesClasses, vector<string>& classNames);
 void loadTestImages(vector<Mat>& grayTestImages, vector<Mat>& colorTestImages);
 bool createDetectorDescriptorMatcher(Ptr<FeatureDetector>& featureDetector,Ptr<DescriptorExtractor>& descriptorExtractor,Ptr<DescriptorMatcher>& descriptorMatcher );
 
@@ -49,21 +49,23 @@ enum Fish{
 
 int main(int argc, char** argv){
 
+    Weka weka;
     BoW bow(detectorType,descriptorType,matcherType,hessianThreshold,dictionarySize);
 
     ColorHistogram ch(2,_HSVColorSpace,false,false,true);
 
     //Train Images
-    vector<Mat>                 grayTrainImages;
-    vector<Mat>                 colorTrainImages;
+    vector<Mat> grayTrainImages;
+    vector<Mat> colorTrainImages;
     //Test Images
-    vector<Mat>                 grayTestImages;
-    vector<Mat>                 colorTestImages;
+    vector<Mat> grayTestImages;
+    vector<Mat> colorTestImages;
 
-    vector<string>              imagesClasses;
+    vector<string> imagesClasses;
+    vector<string> classNames;
 
 
-    loadTrainImages(grayTrainImages,colorTrainImages,imagesClasses);
+    loadTrainImages(grayTrainImages,colorTrainImages,imagesClasses,classNames);
 
     /*
     //ch.createHistograms(colorTrainImages,imagesClasses);
@@ -75,18 +77,27 @@ int main(int argc, char** argv){
       cout << imagesClasses[i] << endl;
     }
     */
-    //BOW
-
-    //bow.loadTrainImages(grayTrainImages,imagesClasses);
-    //bow.runTraining();
-
+    
+    
+    //----------BOW----------------//
+    /*bow.loadTrainImages(grayTrainImages,imagesClasses);
+    bow.runTraining();
+    
+    string f = bow.getArffFileName();
+    
+    weka.openFile(f);
+    weka.insertArffHeader(imagesClasses,dictionarySize);
+    
+    weka.insertArffInstances(bow.getImagesAttributes(),imagesClasses);
+    */
+    /*
     bow.trainFeaturesDetect();
     bow.trainKeyPointsDescriptors();
     bow.createVocabulary();
     bow.setVocabularyOnImageDescriptor();
     bow.saveDictionary();
     bow.createImagesAttributes();
-    
+    */
     //bow.loadDictionary("Dictionary-16.xml");
 
 
@@ -107,22 +118,19 @@ int main(int argc, char** argv){
 
 
     /*BoCW*/
-        /*BoCW bocw;
+        BoCW bocw;
         bocw.loadTrainImages(grayTrainImages,colorTrainImages,imagesClasses);
         bocw.runTraining();
         bocw.saveDictionary();
         vector<vector<float> > features = bocw.getImagesAttributes();
-
-        for (int i = 0; i < features.size(); i ++){
-            cout << i << " -> ";
-            for(int j = 0; j < features[i].size(); j ++){
-                cout  <<" " << features[i][j];
-            }
-            cout << endl;
-        }
-	*/
-
-
+        
+        string f = bocw.getArffFileName();
+        weka.openFile(f);
+        weka.insertArffHeader(classNames,dictionarySize);
+        
+        weka.insertArffInstances(bocw.getImagesAttributes(),imagesClasses);
+      
+    
     //Train SVM bow
     //SVMClass svm(classSet);
     //svm.train(bow.getImagesAttributes(),imagesClasses);
@@ -181,10 +189,10 @@ int main(int argc, char** argv){
 
 
 
-void loadTestImages(vector<Mat>& grayTestImages, vector<Mat>& colorTestImages,vector<string>& imagesClasses){
+void loadTestImages(vector<Mat>& grayTestImages, vector<Mat>& colorTestImages,vector<string>& imagesClasses, vector<string>& classNames){
 
     vector<string> imagesPaths;
-    readImagesPaths(imagesPaths,imagesClasses,true);
+    readImagesPaths(imagesPaths, imagesClasses, classNames, true);
 
     cout << endl << "Loading test images...." << endl;
 
@@ -207,16 +215,16 @@ void loadTestImages(vector<Mat>& grayTestImages, vector<Mat>& colorTestImages,ve
 
 }
 
-void loadTrainImages(vector<Mat>& grayTrainImages, vector<Mat>& colorTrainImages,vector<string>& imagesClasses){
+void loadTrainImages(vector<Mat>& grayTrainImages, vector<Mat>& colorTrainImages, vector<string>& imagesClasses, vector<string>& classNames){
 
     vector<string> imagesPaths;
     vector<string> imagesClass;
-    readImagesPaths(imagesPaths,imagesClasses,false);
+    readImagesPaths(imagesPaths,imagesClasses,classNames,false);
 
     cout << endl << "Loading train images...." << endl;
 
     for(size_t i = 0; i < imagesPaths.size(); i++){
-
+      
         string path         = imagesPaths[i];
         Mat grayImg         = imread(path,CV_LOAD_IMAGE_GRAYSCALE);
         Mat colorImg        = imread(path,CV_LOAD_IMAGE_COLOR);
@@ -235,12 +243,12 @@ void loadTrainImages(vector<Mat>& grayTrainImages, vector<Mat>& colorTrainImages
 }
 
 void readImage(vector<string>& imagesPath,vector<string>& imagesClasses,string rootFolder, string classFolder){
-
+    
     string command = "ls "+rootFolder+"/"+classFolder+" > temp.txt";
     system(command.c_str());
-
+    
     ifstream file("temp.txt");
-
+    
     for(string line; getline(file,line);){
         string path = rootFolder+"/"+classFolder+"/"+line;
         imagesPath.push_back(path);
@@ -248,48 +256,44 @@ void readImage(vector<string>& imagesPath,vector<string>& imagesClasses,string r
     }
 }
 
-void readImagesPaths(vector<string>& imagesPaths,vector<string>& imagesClasses, bool isTest){
-
+void readImagesPaths(vector<string>& imagesPaths, vector<string>& imagesClasses, vector<string>& classNames, bool isTest){
+    
     string folder = isTest ? TestFolder : TrainFolder;
-
+    
     string command = "ls " + folder + " > " + fileWithClassesNames;
     system(command.c_str());
-
+    
     cout << endl << "The File:" << fileWithClassesNames << " contains all class names." << endl;
-
+    
     ifstream file(fileWithClassesNames.c_str());
-
+    
     if(!file.is_open())
         return;
-
+    
     for(string line; getline(file,line);){
-        classSet.push_back(line);
+        classNames.push_back(line);
         readImage(imagesPaths,imagesClasses,folder,line);
     }
-
+    
     //Sort images names.
     sort( imagesPaths.begin() , imagesPaths.end());
-
+    
 }
 
-
-
 void printStringVector(vector<string>& vector){
-
+    
     cout << "String Vector:" <<  endl;
-
+    
     for (size_t i = 0; i < vector.size() ; i++){
         cout << "   " << vector[i].c_str() << endl;
     }
 }
 
-
-
 // Return the index of the class from the name of the training  image
-int getClassNumber(string className) {
+int getClassNumber(vector<string> classNames,string className) {
 
-    for (int i = 0; i < classSet.size(); ++i) {
-        if (classSet[i] == className) {
+    for (int i = 0; i < classNames.size(); ++i) {
+        if (classNames[i] == className) {
             return i;
         }
     }

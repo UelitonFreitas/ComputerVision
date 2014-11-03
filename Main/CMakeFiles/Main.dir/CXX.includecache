@@ -6,7 +6,7 @@
 
 #IncludeRegexTransform: 
 
-/home/ueliton/MyOpenCV/BoCW/BoCW.h
+/home/ueliton/INOVISAO/OpenCV/MyOpenCV/BoCW/BoCW.h
 opencv/cv.h
 -
 opencv/cxcore.h
@@ -18,17 +18,17 @@ opencv2/highgui/highgui.hpp
 opencv2/nonfree/nonfree.hpp
 -
 opencv2/features2d/features2d.hpp
-/home/ueliton/MyOpenCV/BoCW/opencv2/features2d/features2d.hpp
+/home/ueliton/INOVISAO/OpenCV/MyOpenCV/BoCW/opencv2/features2d/features2d.hpp
 opencv2/ml/ml.hpp
-/home/ueliton/MyOpenCV/BoCW/opencv2/ml/ml.hpp
+/home/ueliton/INOVISAO/OpenCV/MyOpenCV/BoCW/opencv2/ml/ml.hpp
 stdlib.h
 -
 ColorMoments.h
-/home/ueliton/MyOpenCV/BoCW/ColorMoments.h
+/home/ueliton/INOVISAO/OpenCV/MyOpenCV/BoCW/ColorMoments.h
 ../ColorHistogram/ColorHistogram.h
-/home/ueliton/MyOpenCV/ColorHistogram/ColorHistogram.h
+/home/ueliton/INOVISAO/OpenCV/MyOpenCV/ColorHistogram/ColorHistogram.h
 
-/home/ueliton/MyOpenCV/BoFC/BoFC.h
+/home/ueliton/INOVISAO/OpenCV/MyOpenCV/BoFC/BoFC.h
 opencv/cv.h
 -
 opencv/cxcore.h
@@ -40,21 +40,21 @@ opencv2/highgui/highgui.hpp
 opencv2/nonfree/nonfree.hpp
 -
 opencv2/features2d/features2d.hpp
-/home/ueliton/MyOpenCV/BoFC/opencv2/features2d/features2d.hpp
+/home/ueliton/INOVISAO/OpenCV/MyOpenCV/BoFC/opencv2/features2d/features2d.hpp
 opencv2/ml/ml.hpp
-/home/ueliton/MyOpenCV/BoFC/opencv2/ml/ml.hpp
+/home/ueliton/INOVISAO/OpenCV/MyOpenCV/BoFC/opencv2/ml/ml.hpp
 stdlib.h
 -
 ColorMoments.h
-/home/ueliton/MyOpenCV/BoFC/ColorMoments.h
+/home/ueliton/INOVISAO/OpenCV/MyOpenCV/BoFC/ColorMoments.h
 
-/home/ueliton/MyOpenCV/BoFC/ColorMoments.h
+/home/ueliton/INOVISAO/OpenCV/MyOpenCV/BoFC/ColorMoments.h
 opencv/cv.h
 -
 stdlib.h
 -
 
-/home/ueliton/MyOpenCV/BoW/BoW.h
+/home/ueliton/INOVISAO/OpenCV/MyOpenCV/BoW/BoW.h
 opencv/cv.h
 -
 opencv/cxcore.h
@@ -66,13 +66,13 @@ opencv2/highgui/highgui.hpp
 opencv2/nonfree/nonfree.hpp
 -
 opencv2/features2d/features2d.hpp
-/home/ueliton/MyOpenCV/BoW/opencv2/features2d/features2d.hpp
+/home/ueliton/INOVISAO/OpenCV/MyOpenCV/BoW/opencv2/features2d/features2d.hpp
 opencv2/ml/ml.hpp
-/home/ueliton/MyOpenCV/BoW/opencv2/ml/ml.hpp
+/home/ueliton/INOVISAO/OpenCV/MyOpenCV/BoW/opencv2/ml/ml.hpp
 stdlib.h
 -
 
-/home/ueliton/MyOpenCV/ColorHistogram/ColorHistogram.h
+/home/ueliton/INOVISAO/OpenCV/MyOpenCV/ColorHistogram/ColorHistogram.h
 stdio.h
 -
 stdlib.h
@@ -80,9 +80,9 @@ stdlib.h
 string.h
 -
 ImageHistogram.h
-/home/ueliton/MyOpenCV/ColorHistogram/ImageHistogram.h
+/home/ueliton/INOVISAO/OpenCV/MyOpenCV/ColorHistogram/ImageHistogram.h
 
-/home/ueliton/MyOpenCV/ColorHistogram/ImageHistogram.h
+/home/ueliton/INOVISAO/OpenCV/MyOpenCV/ColorHistogram/ImageHistogram.h
 stdio.h
 -
 stdlib.h
@@ -90,27 +90,27 @@ stdlib.h
 string.h
 -
 OneDimensionColorHistogram.h
-/home/ueliton/MyOpenCV/ColorHistogram/OneDimensionColorHistogram.h
+/home/ueliton/INOVISAO/OpenCV/MyOpenCV/ColorHistogram/OneDimensionColorHistogram.h
 TwoDimensionColorHistogram.h
-/home/ueliton/MyOpenCV/ColorHistogram/TwoDimensionColorHistogram.h
+/home/ueliton/INOVISAO/OpenCV/MyOpenCV/ColorHistogram/TwoDimensionColorHistogram.h
 TreeDimensionColorHistogram.h
-/home/ueliton/MyOpenCV/ColorHistogram/TreeDimensionColorHistogram.h
+/home/ueliton/INOVISAO/OpenCV/MyOpenCV/ColorHistogram/TreeDimensionColorHistogram.h
 
-/home/ueliton/MyOpenCV/ColorHistogram/OneDimensionColorHistogram.h
+/home/ueliton/INOVISAO/OpenCV/MyOpenCV/ColorHistogram/OneDimensionColorHistogram.h
 stdlib.h
 -
 
-/home/ueliton/MyOpenCV/ColorHistogram/TreeDimensionColorHistogram.h
+/home/ueliton/INOVISAO/OpenCV/MyOpenCV/ColorHistogram/TreeDimensionColorHistogram.h
 stdlib.h
 -
 
-/home/ueliton/MyOpenCV/ColorHistogram/TwoDimensionColorHistogram.h
+/home/ueliton/INOVISAO/OpenCV/MyOpenCV/ColorHistogram/TwoDimensionColorHistogram.h
 stdlib.h
 -
 
-/home/ueliton/MyOpenCV/Main/Main.cpp
+/home/ueliton/INOVISAO/OpenCV/MyOpenCV/Main/Main.cpp
 math.h
-/home/ueliton/MyOpenCV/Main/math.h
+/home/ueliton/INOVISAO/OpenCV/MyOpenCV/Main/math.h
 iostream
 -
 fstream
@@ -132,17 +132,19 @@ pthread.h
 errno.h
 -
 ../BoW/BoW.h
-/home/ueliton/MyOpenCV/BoW/BoW.h
+/home/ueliton/INOVISAO/OpenCV/MyOpenCV/BoW/BoW.h
 ../SVM/SVM.h
-/home/ueliton/MyOpenCV/SVM/SVM.h
+/home/ueliton/INOVISAO/OpenCV/MyOpenCV/SVM/SVM.h
 ../BoFC/BoFC.h
-/home/ueliton/MyOpenCV/BoFC/BoFC.h
+/home/ueliton/INOVISAO/OpenCV/MyOpenCV/BoFC/BoFC.h
 ../ColorHistogram/ColorHistogram.h
-/home/ueliton/MyOpenCV/ColorHistogram/ColorHistogram.h
+/home/ueliton/INOVISAO/OpenCV/MyOpenCV/ColorHistogram/ColorHistogram.h
 ../BoCW/BoCW.h
-/home/ueliton/MyOpenCV/BoCW/BoCW.h
+/home/ueliton/INOVISAO/OpenCV/MyOpenCV/BoCW/BoCW.h
+../Weka/Weka.h
+/home/ueliton/INOVISAO/OpenCV/MyOpenCV/Weka/Weka.h
 
-/home/ueliton/MyOpenCV/SVM/SVM.h
+/home/ueliton/INOVISAO/OpenCV/MyOpenCV/SVM/SVM.h
 iostream
 -
 opencv2/core/core.hpp
@@ -154,6 +156,14 @@ opencv2/ml/ml.hpp
 stdlib.h
 -
 utility
+-
+
+/home/ueliton/INOVISAO/OpenCV/MyOpenCV/Weka/Weka.h
+stdlib.h
+-
+string.h
+-
+sstream
 -
 
 /usr/local/include/opencv/cv.h

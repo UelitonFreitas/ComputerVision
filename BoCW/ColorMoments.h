@@ -19,9 +19,9 @@ class ColorMoments{
     public:
         ColorMoments(){
         }
-
+        
         ColorMoments(float* mean,float* var){
-
+        
             for (int i = 0 ; i < 3 ; i++){
                 this->mean[i]       = mean[i];
                 this->variance[i]   = var[i];
@@ -66,7 +66,7 @@ class ColorMoments{
                         mean[0] += aChannel;
                         mean[1] += bChannel;
                         mean[2] += cChannel;
-
+                
 
                     }
                     numberOfPixels++;
@@ -97,13 +97,10 @@ class ColorMoments{
                     }
                 }
             }
-
+            
             this->variance[0] = pow( (var[0]/numberOfPixels) ,0.5);
             this->variance[1] = pow( (var[1]/numberOfPixels) ,0.5);
             this->variance[2] = pow( (var[1]/numberOfPixels) ,0.5);
-
-
-
         }
 
         void getColorMoments(Mat& image,vector<KeyPoint>& kp,vector<ColorMoments>& colorMoments){
